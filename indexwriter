@@ -20,7 +20,7 @@ public class Demo01 {
 	public Demo01(){
 		IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
 		try {
-			writer = new IndexWriter(FSDirectory.open(Paths.get("D:/lucene")), config);
+			writer = new IndexWriter(FSDirectory.open(Paths.get("D:/index")), config);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

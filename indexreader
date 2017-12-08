@@ -1,0 +1,55 @@
+package com.javing.lucene;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
+
+public class Demo02 {
+
+	private IndexReader reader;
+	
+	public Demo02(){
+		try {
+			reader = DirectoryReader.open(FSDirectory.open(Paths.get("d:/index")));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void find()throws Exception{
+		IndexSearcher searcher = new IndexSearcher(reader);
+		QueryParser parser = new QueryParser("content", new StandardAnalyzer());
+		Query q = parser.parse("respective what takoing");
+		TopDocs docs = searcher.search(q, 3);
+		for(ScoreDoc doc:docs.scoreDocs){
+			System.out.println(doc);
+			int num = doc.doc;
+			Document docu = searcher.doc(num);
+			System.out.println(num);
+			System.out.println(docu.get("path"));
+			System.out.println(docu.get("fileName"));
+			System.out.println(docu.get("content"));
+		}
+	}
+	
+	public static void main(String[] args) {
+		try {
+			new Demo02().find();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+}

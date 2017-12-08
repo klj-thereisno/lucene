@@ -1,0 +1,49 @@
+package com.javing.lucene;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.FSDirectory;
+
+public class Demo01 {
+
+	private IndexWriter writer;
+	
+	public Demo01(){
+		IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
+		try {
+			writer = new IndexWriter(FSDirectory.open(Paths.get("D:/lucene")), config);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void index(String path)throws Exception{
+		File[] files = new File(path).listFiles();
+		Document doc = null;
+		for (File file : files) {
+			doc = new Document();
+			doc.add(new TextField("path", file.getAbsolutePath(), Store.YES));
+			doc.add(new TextField("fileName", file.getName(), Store.YES));
+			doc.add(new TextField("content", new FileReader(file)));
+			writer.addDocument(doc);
+		}
+		System.out.println("numDocs:" + writer.numDocs());
+		System.out.println("maxDoc:" + writer.maxDoc());
+		System.out.println("numRamDocs:" + writer.numRamDocs());
+		writer.close();
+	}
+	
+	public static void main(String[] args) throws Exception {
+		new Demo01().index("d:/data");
+	}
+}

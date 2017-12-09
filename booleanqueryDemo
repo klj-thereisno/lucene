@@ -1,4 +1,4 @@
-package fun.thereisno.lucene;
+package com.javing.lucene;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

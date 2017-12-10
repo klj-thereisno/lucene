@@ -33,7 +33,7 @@ public class IndexBlog {
 		IndexReader reader = null;
 		String str = "技术";
 		// File f = new File(PropertiesUtil.getKey("indexPathWindow"));
-		File f = new File("/index/crawl2");
+		File f = new File("/index");
 		if(f.list().length > 1){
 			reader = DirectoryReader.open(FSDirectory.open(f.toPath()));
 			IndexSearcher searcher = new IndexSearcher(reader);

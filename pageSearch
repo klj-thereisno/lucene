@@ -18,7 +18,7 @@ public class SearchDemo {
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("d:/index")));
 		IndexSearcher searcher = new IndexSearcher(reader);
 		QueryParser p  = new QueryParser("title", new SmartChineseAnalyzer());
-		Query q = p.parse("技术");
+		Query q = p.parse("java报告");
 		int start = (page - 1) * size;
 		TopDocs tops = searcher.search(q, size);
 		ScoreDoc sd = null;
@@ -33,5 +33,8 @@ public class SearchDemo {
 	
 	public static void main(String[] args) throws Exception {
 		pagination(1,10);
+		// pagination(1,3);
+		// pagination(2,3);
+		// pagination(3,3);
 	}
 }

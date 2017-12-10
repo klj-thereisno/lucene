@@ -1,0 +1,37 @@
+package com.javing.lucene;
+
+import java.nio.file.Paths;
+
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
+
+public class SearchDemo {
+
+	public static void pagination(int page, int size)throws Exception{
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("d:/index")));
+		IndexSearcher searcher = new IndexSearcher(reader);
+		QueryParser p  = new QueryParser("title", new SmartChineseAnalyzer());
+		Query q = p.parse("技术");
+		int start = (page - 1) * size;
+		TopDocs tops = searcher.search(q, size);
+		ScoreDoc sd = null;
+		if(start > 0){
+			sd = tops.scoreDocs[start - 1];
+		}
+		TopDocs docs = searcher.searchAfter(sd, q, size);
+		for(ScoreDoc doc : docs.scoreDocs){
+			System.out.println(searcher.doc(doc.doc).get("title"));
+		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		pagination(1,10);
+	}
+}

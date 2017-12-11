@@ -1,0 +1,45 @@
+package com.javing.lucene;
+
+import java.nio.file.Paths;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Fragmenter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.store.FSDirectory;
+
+public class HighLighter {
+
+	public static void main(String[] args) throws Exception {
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("d:/index")));
+		IndexSearcher searcher = new IndexSearcher(reader);
+		Analyzer ana = new SmartChineseAnalyzer();
+		Query q = new QueryParser("title", ana).parse("java报告");
+		
+		QueryScorer scorer = new QueryScorer(q);
+		Fragmenter frag = new SimpleSpanFragmenter(scorer);
+		Formatter formatter = new SimpleHTMLFormatter("<b><span style='color:red'>", "</span></b>");
+		Highlighter lighter = new Highlighter(formatter, scorer);
+		lighter.setTextFragmenter(frag);
+		TopDocs tops = searcher.search(q, 5);
+		for(ScoreDoc sd : tops.scoreDocs){
+			Document doc = searcher.doc(sd.doc);
+			String title = doc.get("title");
+			String hTitle = lighter.getBestFragment(ana, "title", title);
+			System.out.println(hTitle);
+			System.out.println("--------------");
+		}
+	}
+}
